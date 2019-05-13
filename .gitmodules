@@ -1,3 +1,15 @@
 [submodule "Assets/latkUnity"]
 	path = Assets/latkUnity
 	url = https://github.com/LightningArtist/latkUnity
+[submodule "Assets/latkxKinect"]
+	path = Assets/latkxKinect
+	url = https://github.com/n1ckfg/latkxKinect
+[submodule "Assets/latkxLeapMotion"]
+	path = Assets/latkxLeapMotion
+	url = https://github.com/n1ckfg/latkxLeapMotion
+[submodule "Assets/latkxLipSync"]
+	path = Assets/latkxLipSync
+	url = https://github.com/n1ckfg/latkxLipSync
+[submodule "Assets/latkxUtility"]
+	path = Assets/latkxUtility
+	url = https://github.com/n1ckfg/latkxUtility
