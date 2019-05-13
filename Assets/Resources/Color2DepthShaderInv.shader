@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Kinect/Color2DepthShaderInv" {
+Shader "Kinect/Body2ColorShaderInv" {
     Properties {
         _BodyTex ("Body (RGB)", 2D) = "white" {}
         _ColorTex ("Color (RGB)", 2D) = "white" {}
@@ -22,6 +22,8 @@ Shader "Kinect/Color2DepthShaderInv" {
 
 			uniform sampler2D _BodyTex;
 			uniform sampler2D _ColorTex;
+			uniform sampler2D _GradientTex;
+			uniform fixed4 _GradientColor;
 
 			struct v2f {
 				float4 pos : SV_POSITION;
@@ -38,11 +40,11 @@ Shader "Kinect/Color2DepthShaderInv" {
 				return o;
 			}
 
-			float4 frag (v2f i) : COLOR
+			fixed4 frag (v2f i) : COLOR
 			{
-				float player = tex2D(_BodyTex, i.uv).w;
-				float4 clr = tex2D (_ColorTex, i.uv);
-				clr.w = player < 0.1 ? 1 : 0; // (1 - player);
+				fixed playerA = tex2D(_BodyTex, i.uv).w;
+				fixed4 clr = tex2D (_ColorTex, i.uv);
+				clr.w = playerA < 0.1 ? 1 : 0; // (1 - player);
 
 				return clr;
 			}

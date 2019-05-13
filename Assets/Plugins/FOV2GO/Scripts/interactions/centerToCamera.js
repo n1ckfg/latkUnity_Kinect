@@ -38,7 +38,7 @@ function Start () {
 	mainCamObj = GameObject.FindWithTag("MainCamera");	// Main Camera
 	cursorObj = GameObject.FindWithTag("cursor");
 	cursorScript = cursorObj.GetComponent(s3dGuiCursor);
-	if (!GetComponent.<Rigidbody>()) {
+	if (!rigidbody) {
 		startPos = transform.position;
 		startRot = transform.rotation;
 		foundStartPos = true;
@@ -66,8 +66,8 @@ function NewTap(params: TapParams) {
 			takeBreather();
 		}	
 		if (floating) {
-			if (GetComponent.<Rigidbody>()) {
-				GetComponent.<Rigidbody>().isKinematic = true;
+			if (rigidbody) {
+				rigidbody.isKinematic = true;
 			}
 			originalParent = transform.parent;
 			tempParent = new GameObject ("tempParent");
@@ -110,21 +110,21 @@ function Update () {
 			transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(floatRotOffset), Time.deltaTime*objectSpeed);
 		}
 	} else {
-		if (!GetComponent.<Rigidbody>() || (GetComponent.<Rigidbody>() && returnToOrigin && foundStartPos)) {
+		if (!rigidbody || (rigidbody && returnToOrigin && foundStartPos)) {
 			if (transform.position != startPos) {
 				transform.position = Vector3.Lerp(transform.position, startPos, Time.deltaTime*objectSpeed);
 				if (returnToOriginalRotation) {
 					transform.rotation = Quaternion.Lerp(transform.rotation, startRot, Time.deltaTime*objectSpeed);
 				}
 			} else {
-				if (GetComponent.<Rigidbody>()) {
-					GetComponent.<Rigidbody>().isKinematic = false;
+				if (rigidbody) {
+					rigidbody.isKinematic = false;
 				}
 			}
 		} else {
-			if (GetComponent.<Rigidbody>().isKinematic) {
-				GetComponent.<Rigidbody>().WakeUp();
-				GetComponent.<Rigidbody>().isKinematic = false;
+			if (rigidbody.isKinematic) {
+				rigidbody.WakeUp();
+				rigidbody.isKinematic = false;
 			}
 		}
 	}

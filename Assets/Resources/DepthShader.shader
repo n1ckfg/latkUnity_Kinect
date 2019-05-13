@@ -23,7 +23,7 @@ Shader "Kinect/DepthShader" {
 			uniform float _TexResX;
 			uniform float _TexResY;
 			uniform float _TotalPoints;
-			uniform int _FirstUserIndex;
+			uniform uint _FirstUserIndex;
 
 			StructuredBuffer<float> _DepthBuffer;
 			StructuredBuffer<float> _HistBuffer;
@@ -53,7 +53,7 @@ Shader "Kinect/DepthShader" {
 				//float player = tex2D(_MainTex, i.uv).w;
 				//int playerIndex = (int)(player * 255);
 				
-				float playerIndex = (int)_BodyIndexBuffer[di];
+				uint playerIndex = (uint)_BodyIndexBuffer[di];
 				
 				//if (player != 0)
 				if (playerIndex != 255)

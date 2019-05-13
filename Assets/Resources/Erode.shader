@@ -48,10 +48,12 @@ Shader "Custom/Erode" {
 					for(int x = -1; x < 2; x++)
 				    {
 					    float val = tex2D(_MainTex, float2(i.uv.x + (float)x/_TexResX, i.uv.y + (float)y/_TexResY)).w;
-					    if(val > 0.0)
-					 	    val = 1.0;
-					    if(val < minValue)
-				 		    minValue = val;
+//					    if(val > 0.0)
+//					 	    val = 1.0;
+//					    if(val < minValue)
+//				 		    minValue = val;
+						if(val == 0.0)
+							minValue = 0.0;
 				    }
 				}
 

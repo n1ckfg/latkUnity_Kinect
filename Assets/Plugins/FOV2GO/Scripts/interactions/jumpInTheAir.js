@@ -26,8 +26,8 @@ function Update () {
 function NewTap(params: TapParams) {
 	if (params.tap == tapType || tapType == 3) {
 		var pushForce : Vector3 = new Vector3(Random.Range(-randomForce,randomForce), upForce, Random.Range(-randomForce,randomForce));
-		GetComponent.<Rigidbody>().AddForce (pushForce);
+		rigidbody.AddForce (pushForce);
 		var spinForce : Vector3 = new Vector3(Random.Range(-torqueForce,torqueForce), Random.Range(-torqueForce,torqueForce), Random.Range(-torqueForce,torqueForce));
-		GetComponent.<Rigidbody>().AddRelativeTorque (spinForce);
+		rigidbody.AddRelativeTorque (spinForce);
 	}
 }

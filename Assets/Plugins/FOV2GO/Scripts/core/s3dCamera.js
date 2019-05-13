@@ -99,22 +99,22 @@ function SetupCameras() {
 	var lcam = transform.Find("leftCam"); // check if we've already created a leftCam
 	if (lcam) {
 		leftCam = lcam.gameObject;
-		leftCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		leftCam.camera.CopyFrom (camera);
 	} else {
 		leftCam = new GameObject ("leftCam", Camera);
 		leftCam.AddComponent(GUILayer);
-		leftCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		leftCam.camera.CopyFrom (camera);
 		leftCam.transform.parent = transform;
 	}
 
 	var rcam = transform.Find("rightCam"); // check if we've already created a rightCam
 	if (rcam) {
 		rightCam = rcam.gameObject;
-		rightCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		rightCam.camera.CopyFrom (camera);
 	} else {
 		rightCam = new GameObject("rightCam", Camera);
 		rightCam.AddComponent(GUILayer);
-		rightCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		rightCam.camera.CopyFrom (camera);
 		rightCam.transform.parent = transform;
 	}
 	
@@ -124,7 +124,7 @@ function SetupCameras() {
 	} else {
 		maskCam = new GameObject("maskCam", Camera);
 		maskCam.AddComponent(GUILayer);
-		maskCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		maskCam.camera.CopyFrom (camera);
 		maskCam.transform.parent = transform;
 	}
 	
@@ -134,44 +134,44 @@ function SetupCameras() {
 	} else {
 		guiCam = new GameObject("guiCam", Camera);
 		guiCam.AddComponent(GUILayer);
-		guiCam.GetComponent.<Camera>().CopyFrom (GetComponent.<Camera>());
+		guiCam.camera.CopyFrom (camera);
 		guiCam.transform.parent = transform;
 	}
 
 	var guiC : GUILayer = GetComponent(GUILayer);
 	guiC.enabled = false;
 	
-	GetComponent.<Camera>().depth = -2; // rendering order (back to front): centerCam/maskCam/leftCam1/rightCam1/leftCam2/rightCam2/ etc
+	camera.depth = -2; // rendering order (back to front): centerCam/maskCam/leftCam1/rightCam1/leftCam2/rightCam2/ etc
 	
-	horizontalFOV = (2 * Mathf.Atan(Mathf.Tan((GetComponent.<Camera>().fieldOfView * Mathf.Deg2Rad) / 2) * GetComponent.<Camera>().aspect))*Mathf.Rad2Deg;
-	verticalFOV = GetComponent.<Camera>().fieldOfView;
+	horizontalFOV = (2 * Mathf.Atan(Mathf.Tan((camera.fieldOfView * Mathf.Deg2Rad) / 2) * camera.aspect))*Mathf.Rad2Deg;
+	verticalFOV = camera.fieldOfView;
 	
-	leftCam.GetComponent.<Camera>().depth = GetComponent.<Camera>().depth + (renderOrderDepth*2) + 2;
-	rightCam.GetComponent.<Camera>().depth = GetComponent.<Camera>().depth + ((renderOrderDepth*2)+1) + 3;
+	leftCam.camera.depth = camera.depth + (renderOrderDepth*2) + 2;
+	rightCam.camera.depth = camera.depth + ((renderOrderDepth*2)+1) + 3;
 	
 	if (useLeftRightOnlyLayers) {
 		if (useCustomStereoLayer) {
-			leftCam.GetComponent.<Camera>().cullingMask = (1 << stereoLayer | 1 << leftOnlyLayer); // show stereo + left only
-			rightCam.GetComponent.<Camera>().cullingMask = (1 << stereoLayer | 1 << rightOnlyLayer); // show stereo + right only
+			leftCam.camera.cullingMask = (1 << stereoLayer | 1 << leftOnlyLayer); // show stereo + left only
+			rightCam.camera.cullingMask = (1 << stereoLayer | 1 << rightOnlyLayer); // show stereo + right only
 		} else {
-			leftCam.GetComponent.<Camera>().cullingMask = ~(1 << rightOnlyLayer | 1 << guiOnlyLayer); // show everything but right only layer & mask only layer
-			rightCam.GetComponent.<Camera>().cullingMask = ~(1 << leftOnlyLayer | 1 << guiOnlyLayer); // show everything but left only layer & mask only layer
+			leftCam.camera.cullingMask = ~(1 << rightOnlyLayer | 1 << guiOnlyLayer); // show everything but right only layer & mask only layer
+			rightCam.camera.cullingMask = ~(1 << leftOnlyLayer | 1 << guiOnlyLayer); // show everything but left only layer & mask only layer
 		}
 	} else {
 		if (useCustomStereoLayer) {
-			leftCam.GetComponent.<Camera>().cullingMask = (1 << stereoLayer); // show stereo layer only
-			rightCam.GetComponent.<Camera>().cullingMask = (1 << stereoLayer); // show stereo layer only
+			leftCam.camera.cullingMask = (1 << stereoLayer); // show stereo layer only
+			rightCam.camera.cullingMask = (1 << stereoLayer); // show stereo layer only
 		}
 	}
 		
-	maskCam.GetComponent.<Camera>().depth = leftCam.GetComponent.<Camera>().depth-1;
-	guiCam.GetComponent.<Camera>().depth = rightCam.GetComponent.<Camera>().depth+1;
+	maskCam.camera.depth = leftCam.camera.depth-1;
+	guiCam.camera.depth = rightCam.camera.depth+1;
 	
-	maskCam.GetComponent.<Camera>().cullingMask = 0;
-	guiCam.GetComponent.<Camera>().cullingMask = 1 << guiOnlyLayer; // only show what's in the guiOnly layer
-	maskCam.GetComponent.<Camera>().clearFlags = CameraClearFlags.SolidColor;
-	guiCam.GetComponent.<Camera>().clearFlags = CameraClearFlags.Depth;
-	maskCam.GetComponent.<Camera>().backgroundColor = Color.black;	
+	maskCam.camera.cullingMask = 0;
+	guiCam.camera.cullingMask = 1 << guiOnlyLayer; // only show what's in the guiOnly layer
+	maskCam.camera.clearFlags = CameraClearFlags.SolidColor;
+	guiCam.camera.clearFlags = CameraClearFlags.Depth;
+	maskCam.camera.backgroundColor = Color.black;	
 	#if !UNITY_EDITOR
 		if (!useStereoShader) {
 			camera.enabled = false; // speeds up rendering, especially on Android, but doesn't work if useStereoShader is true
@@ -188,29 +188,29 @@ function SetupShader() {
 		stereoMaterial.SetTexture ("_LeftTex", leftCamRT);
 		stereoMaterial.SetTexture ("_RightTex", rightCamRT);
 	
-		leftCam.GetComponent.<Camera>().targetTexture = leftCamRT;
-		rightCam.GetComponent.<Camera>().targetTexture = rightCamRT;
+		leftCam.camera.targetTexture = leftCamRT;
+		rightCam.camera.targetTexture = rightCamRT;
 	} else {
 		if (format3D == mode3D.SideBySide) {
 			if (!usePhoneMask) {
-				leftCam.GetComponent.<Camera>().rect = Rect(0,0,0.5,1);
-				rightCam.GetComponent.<Camera>().rect = Rect(0.5,0,0.5,1);
+				leftCam.camera.rect = Rect(0,0,0.5,1);
+				rightCam.camera.rect = Rect(0.5,0,0.5,1);
 			} else {
-				leftCam.GetComponent.<Camera>().rect = Vector4toRect(leftViewRect);
-				rightCam.GetComponent.<Camera>().rect = Vector4toRect(rightViewRect);
+				leftCam.camera.rect = Vector4toRect(leftViewRect);
+				rightCam.camera.rect = Vector4toRect(rightViewRect);
 			}
-			leftViewRect = RectToVector4(leftCam.GetComponent.<Camera>().rect);
-			rightViewRect = RectToVector4(rightCam.GetComponent.<Camera>().rect);
+			leftViewRect = RectToVector4(leftCam.camera.rect);
+			rightViewRect = RectToVector4(rightCam.camera.rect);
 		} else if (format3D == mode3D.OverUnder) {
 			if (!usePhoneMask) {
-				leftCam.GetComponent.<Camera>().rect = Rect(0,0.5,1,0.5);
-				rightCam.GetComponent.<Camera>().rect = Rect(0,0,1,0.5);
+				leftCam.camera.rect = Rect(0,0.5,1,0.5);
+				rightCam.camera.rect = Rect(0,0,1,0.5);
 			} else {
-				leftCam.GetComponent.<Camera>().rect = Vector4toRect(leftViewRect);
-				rightCam.GetComponent.<Camera>().rect = Vector4toRect(rightViewRect);
+				leftCam.camera.rect = Vector4toRect(leftViewRect);
+				rightCam.camera.rect = Vector4toRect(rightViewRect);
 			}
-			leftViewRect = RectToVector4(leftCam.GetComponent.<Camera>().rect);
-			rightViewRect = RectToVector4(rightCam.GetComponent.<Camera>().rect);
+			leftViewRect = RectToVector4(leftCam.camera.rect);
+			rightViewRect = RectToVector4(rightCam.camera.rect);
 		} else {
 			print("Unity Free only supports Side-by-Side and Over-Under modes!");
 		}
@@ -222,28 +222,28 @@ function SetStereoFormat() {
 	switch (format3D) {
 		case (mode3D.SideBySide):
 			if (useStereoShader) {
-				maskCam.GetComponent.<Camera>().enabled = false;
+				maskCam.camera.enabled = false;
 			} else {
-				maskCam.GetComponent.<Camera>().enabled = usePhoneMask;
+				maskCam.camera.enabled = usePhoneMask;
 			}
 			break;
 		case (mode3D.Anaglyph):
-			maskCam.GetComponent.<Camera>().enabled = false;
+			maskCam.camera.enabled = false;
 			SetAnaType();
 			break;
 		case (mode3D.OverUnder):
 			if (useStereoShader) {
-				maskCam.GetComponent.<Camera>().enabled = false;
+				maskCam.camera.enabled = false;
 			} else {
-				maskCam.GetComponent.<Camera>().enabled = usePhoneMask;
+				maskCam.camera.enabled = usePhoneMask;
 			}
 			break;
 		case (mode3D.Interlace):
-			maskCam.GetComponent.<Camera>().enabled = false;
+			maskCam.camera.enabled = false;
 			SetWeave(false);
 			break;
 		case (mode3D.Checkerboard):
-			maskCam.GetComponent.<Camera>().enabled = false;
+			maskCam.camera.enabled = false;
 			SetWeave(true);
 			break;
 	}
@@ -267,36 +267,36 @@ function SetupScreenPlanes() {
 	     	planeNear.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 	     	planeNear.name = "nearDistPlane";
 	     	var shader1 : Shader = Shader.Find("Particles/Additive");
-	     	planeNear.GetComponent.<Renderer>().sharedMaterial = new Material(shader1);
-	     	planeNear.GetComponent.<Renderer>().sharedMaterial.mainTexture = depthPlane.GetComponent.<Renderer>().sharedMaterial.mainTexture;
-	     	planeNear.GetComponent.<Renderer>().sharedMaterial.SetColor("_TintColor",Color.yellow);
+	     	planeNear.renderer.sharedMaterial = new Material(shader1);
+	     	planeNear.renderer.sharedMaterial.mainTexture = depthPlane.renderer.sharedMaterial.mainTexture;
+	     	planeNear.renderer.sharedMaterial.SetColor("_TintColor",Color.yellow);
 	     	
 			planeFar = Instantiate (depthPlane, transform.position, transform.rotation);
 			planeFar.transform.parent = depthPlanes.transform;
 	     	planeFar.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 	     	planeFar.name = "farDistPlane";
 	     	var shader2 : Shader = Shader.Find("Particles/Additive");
-	     	planeFar.GetComponent.<Renderer>().sharedMaterial = new Material(shader2);
-	     	planeFar.GetComponent.<Renderer>().sharedMaterial.mainTexture = depthPlane.GetComponent.<Renderer>().sharedMaterial.mainTexture;
-	     	planeFar.GetComponent.<Renderer>().sharedMaterial.SetColor("_TintColor",Color.green);
+	     	planeFar.renderer.sharedMaterial = new Material(shader2);
+	     	planeFar.renderer.sharedMaterial.mainTexture = depthPlane.renderer.sharedMaterial.mainTexture;
+	     	planeFar.renderer.sharedMaterial.SetColor("_TintColor",Color.green);
 		} else {
 			planeZero = GameObject.Find("screenDistPlane");
 			planeNear = GameObject.Find("nearDistPlane");
 			planeFar = GameObject.Find("farDistPlane");
 		}
-		planeZero.GetComponent.<Renderer>().enabled = false;
-		planeNear.GetComponent.<Renderer>().enabled = false;
-		planeFar.GetComponent.<Renderer>().enabled = false;
+		planeZero.renderer.enabled = false;
+		planeNear.renderer.enabled = false;
+		planeFar.renderer.enabled = false;
 	}
 }  	
 
 // called from initStereoCamera (above), and from s3dGyroCam.js (when phone orientation is changed due to AutoRotation)
 function fixCameraAspect() {
-	GetComponent.<Camera>().ResetAspect();
+	camera.ResetAspect();
 	//yield WaitForSeconds(0.25);
-	GetComponent.<Camera>().aspect *= leftCam.GetComponent.<Camera>().rect.width*2/leftCam.GetComponent.<Camera>().rect.height;
-	leftCam.GetComponent.<Camera>().aspect = GetComponent.<Camera>().aspect;
-	rightCam.GetComponent.<Camera>().aspect = GetComponent.<Camera>().aspect;
+	camera.aspect *= leftCam.camera.rect.width*2/leftCam.camera.rect.height;
+	leftCam.camera.aspect = camera.aspect;
+	rightCam.camera.aspect = camera.aspect;
 }
 
 function Vector4toRect(v : Vector4) {
@@ -313,9 +313,9 @@ function Update() {
 	#if UNITY_EDITOR
 	if (!useStereoShader) {
 		if (EditorApplication.isPlaying) {  // speeds up rendering while in play mode, but doesn't work if useStereoShader is true
-			GetComponent.<Camera>().enabled = false;
+			camera.enabled = false;
 		} else {
-			GetComponent.<Camera>().enabled = true; // need camera enabled when in edit mode
+			camera.enabled = true; // need camera enabled when in edit mode
 		}
 	}
 	if (useStereoShader) {
@@ -331,7 +331,7 @@ function Update() {
 	}
 	useStereoShaderPrev = useStereoShader;
 	#endif
-	planes = GeometryUtility.CalculateFrustumPlanes(GetComponent.<Camera>());
+	planes = GeometryUtility.CalculateFrustumPlanes(camera);
 	
 	if (Application.isPlaying) {
 		if (!initialized) {
@@ -365,8 +365,8 @@ function UpdateView() {
 			break;
 	}
 	if (toedIn) {
-		leftCam.GetComponent.<Camera>().projectionMatrix = GetComponent.<Camera>().projectionMatrix;
-		rightCam.GetComponent.<Camera>().projectionMatrix = GetComponent.<Camera>().projectionMatrix;
+		leftCam.camera.projectionMatrix = camera.projectionMatrix;
+		rightCam.camera.projectionMatrix = camera.projectionMatrix;
 		leftCam.transform.LookAt (transform.position + (transform.TransformDirection (Vector3.forward) * zeroPrlxDist));
 		rightCam.transform.LookAt (transform.position + (transform.TransformDirection (Vector3.forward) * zeroPrlxDist));
 	} else {
@@ -374,20 +374,20 @@ function UpdateView() {
 		rightCam.transform.rotation = transform.rotation;
 		switch (cameraSelect) {
 			case cams3D.Left_Right:
-				leftCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(true);
-				rightCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(false);
+				leftCam.camera.projectionMatrix = setProjectionMatrix(true);
+				rightCam.camera.projectionMatrix = setProjectionMatrix(false);
 				break;
 			case cams3D.Left_Only:
-				leftCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(true);
-				rightCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(true);
+				leftCam.camera.projectionMatrix = setProjectionMatrix(true);
+				rightCam.camera.projectionMatrix = setProjectionMatrix(true);
 				break;
 			case cams3D.Right_Only:
-				leftCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(false);
-				rightCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(false);
+				leftCam.camera.projectionMatrix = setProjectionMatrix(false);
+				rightCam.camera.projectionMatrix = setProjectionMatrix(false);
 				break;
 			case cams3D.Right_Left:
-				leftCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(false);
-				rightCam.GetComponent.<Camera>().projectionMatrix = setProjectionMatrix(true);
+				leftCam.camera.projectionMatrix = setProjectionMatrix(false);
+				rightCam.camera.projectionMatrix = setProjectionMatrix(true);
 				break;
 		}
 	}
@@ -400,8 +400,8 @@ function setProjectionMatrix(isLeftCam : boolean) : Matrix4x4 {
 	var a : float;
 	var b : float;
 	var FOVrad : float;
-	var tempAspect: float = GetComponent.<Camera>().aspect;
-	FOVrad = GetComponent.<Camera>().fieldOfView / 180.0 * Mathf.PI;
+	var tempAspect: float = camera.aspect;
+	FOVrad = camera.fieldOfView / 180.0 * Mathf.PI;
 	if (format3D == mode3D.SideBySide) {
 		if (!sideBySideSqueezed) {
 			tempAspect /= 2;	// if side by side unsqueezed, double width
@@ -413,8 +413,8 @@ function setProjectionMatrix(isLeftCam : boolean) : Matrix4x4 {
 			tempAspect /= 2;
 		}
 	}
-	a = GetComponent.<Camera>().nearClipPlane * Mathf.Tan(FOVrad * 0.5);
-	b = GetComponent.<Camera>().nearClipPlane / zeroPrlxDist;
+	a = camera.nearClipPlane * Mathf.Tan(FOVrad * 0.5);
+	b = camera.nearClipPlane / zeroPrlxDist;
 	if (isLeftCam) {
 		left  = (-tempAspect * a) + (interaxial/2000.0 * b) + (H_I_T/100) + (offAxisFrustum/100);
 		right =	(tempAspect * a) + (interaxial/2000.0 * b) + (H_I_T/100) + (offAxisFrustum/100);
@@ -422,7 +422,7 @@ function setProjectionMatrix(isLeftCam : boolean) : Matrix4x4 {
 		left  = (-tempAspect * a) - (interaxial/2000.0 * b) - (H_I_T/100) + (offAxisFrustum/100);
 		right =	(tempAspect * a) - (interaxial/2000.0 * b) - (H_I_T/100) + (offAxisFrustum/100);
 	}
-	return PerspectiveOffCenter(left, right, -a, a, GetComponent.<Camera>().nearClipPlane, GetComponent.<Camera>().farClipPlane);
+	return PerspectiveOffCenter(left, right, -a, a, camera.nearClipPlane, camera.farClipPlane);
 } 
 
 function PerspectiveOffCenter(
@@ -446,8 +446,8 @@ function PerspectiveOffCenter(
 }
 
 function releaseRenderTextures() {
-	leftCam.GetComponent.<Camera>().targetTexture = null;
-	rightCam.GetComponent.<Camera>().targetTexture = null;
+	leftCam.camera.targetTexture = null;
+	rightCam.camera.targetTexture = null;
 	leftCamRT.Release();
 	rightCamRT.Release();
 }	

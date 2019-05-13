@@ -1,9 +1,11 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Kinect/Color2DepthShader" {
+Shader "Kinect/Body2ColorShader" {
     Properties {
-        _BodyTex ("Body (RGB)", 2D) = "white" {}
-        _ColorTex ("Color (RGB)", 2D) = "white" {}
+        _BodyTex ("BodyTex (RGB)", 2D) = "white" {}
+        _ColorTex ("ColorTex (RGB)", 2D) = "white" {}
+        _GradientTex ("GradientTex (RGB)", 2D) = "white" {}
+        _GradientColor ("GradientColor", Color) = (1, 1, 1, 1)
     }
     
 	SubShader {
@@ -22,6 +24,9 @@ Shader "Kinect/Color2DepthShader" {
 
 			uniform sampler2D _BodyTex;
 			uniform sampler2D _ColorTex;
+			uniform sampler2D _GradientTex;
+			uniform fixed4 _GradientColor;
+
 
 			struct v2f {
 				float4 pos : SV_POSITION;
@@ -38,11 +43,16 @@ Shader "Kinect/Color2DepthShader" {
 				return o;
 			}
 
-			float4 frag (v2f i) : COLOR
+			fixed4 frag (v2f i) : COLOR
 			{
-				float player = tex2D(_BodyTex, i.uv).w;
-				float4 clr = tex2D (_ColorTex, i.uv);
-				clr.w = player < 0.8 ? player : 1;
+				fixed playerA = tex2D(_BodyTex, i.uv).w;
+				if(playerA > 0.8) playerA = 1.0;
+
+				fixed gradientA = tex2D(_GradientTex, i.uv).w;
+				//return tex2D(_GradientTex, i.uv);
+
+				fixed4 clr = gradientA > 0.5 && _GradientColor.a > 0.0 ? _GradientColor : tex2D(_ColorTex, i.uv);
+				clr.w = playerA;
 
 				return clr;
 			}

@@ -24,13 +24,13 @@ Shader "Custom/BlurShader" {
 		float2 uv[8] : TEXCOORD0;
 	};
 	
-	v2f vert (appdata_img v)
-	{
-		v2f o;
-		o.pos = UnityObjectToClipPos (v.vertex);
-		o.uv = v.texcoord.xy;
-		return o;
-	}
+//	v2f vert (appdata_img v)
+//	{
+//		v2f o;
+//		o.pos = UnityObjectToClipPos (v.vertex);
+//		o.uv = v.texcoord.xy;
+//		return o;
+//	}
 	
 	v2f_off vertOff (appdata_img v)
 	{
@@ -79,7 +79,7 @@ Shader "Custom/BlurShader" {
 			CGPROGRAM
 			#pragma vertex vertOff
 			#pragma fragment fragOff
-			#pragma target 3.0
+//			#pragma target 3.0
 			ENDCG
 		}
 	}

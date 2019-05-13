@@ -27,14 +27,14 @@ function Start() {
 
 function NewTap(params: TapParams) {
 	if (params.tap == tapType || tapType == 3) {
-		if (!GetComponent.<AudioSource>().isPlaying){
-	        GetComponent.<AudioSource>().Play();
+		if (!audio.isPlaying){
+	        audio.Play();
 		} else {
 			if (toggleOnOff) {
 				if (rewindOnStop) {
-					GetComponent.<AudioSource>().Stop();
+					audio.Stop();
 				} else {
-					GetComponent.<AudioSource>().Pause();
+					audio.Pause();
 				}
 			}
 		}

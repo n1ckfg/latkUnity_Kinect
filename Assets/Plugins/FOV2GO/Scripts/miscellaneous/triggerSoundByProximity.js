@@ -9,13 +9,13 @@ private var playerCloseEnough = false;
 function Update(){
     if (Vector3.Distance(transform.position, player.position) < distance) {
         playerCloseEnough = true;
-        if (!GetComponent.<AudioSource>().isPlaying) {
-			GetComponent.<AudioSource>().Play();
+        if (!audio.isPlaying) {
+			audio.Play();
         }
    } else {
        playerCloseEnough = false;
-       if (GetComponent.<AudioSource>().isPlaying) {
-			GetComponent.<AudioSource>().Stop();
+       if (audio.isPlaying) {
+			audio.Stop();
         }
     }
 }
